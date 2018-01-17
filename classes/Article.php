@@ -37,6 +37,10 @@ class Article
     */
     public $content = null;
     /**
+    * @var string HTML первые 50 символов статьи
+    */
+    public $content50char = null;
+    /**
     * Устанавливаем свойства с помощью значений в заданном массиве
     *
     * @param assoc Значения свойств
@@ -83,7 +87,8 @@ class Article
       }
       
       if (isset($data['content'])) {
-          $this->content = $data['content'];  
+          $this->content = $data['content'];
+          $this->content50char = mb_strimwidth($data['content'], 0, 50) . '...';
       }
     }
 

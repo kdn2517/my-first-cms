@@ -25,7 +25,7 @@
                     </span>
                 <?php } ?>
             </h2>
-            <p class="summary"><?php echo htmlspecialchars($article->summary)?></p>
+            <p class="summary"><?php echo htmlspecialchars($article->content50char)?></p>
             <img id="loader-identity" src="JS/ajax-loader.gif" alt="gif">
             <a href=".?action=viewArticle&amp;articleId=<?php echo $article->id?>" class="showContentPOSTmethod" data-contentId="<?php echo $article->id?>">Запросить методом POST</a>
             <a href=".?action=viewArticle&amp;articleId=<?php echo $article->id?>" class="showContent" data-contentId="<?php echo $article->id?>">Показать полностью</a>
