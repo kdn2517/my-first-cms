@@ -17,6 +17,7 @@
               <th>Publication Date</th>
               <th>Article</th>
               <th>Category</th>
+              <th>Active</th>
             </tr>
 
 <!--<?php echo "<pre>"; print_r ($results['articles'][2]->publicationDate); echo "</pre>"; ?> Обращаемся к дате массива $results. Дата = 0 -->
@@ -42,6 +43,17 @@
                 echo "Без категории";
                 }?>
               </td>
+              
+              <td>
+                  <?php
+                    if($article->activeArticle) {
+                        echo 'Active';
+                    } else {
+                        echo 'Not active';
+                    }
+                  ?>
+              </td>
+
             </tr>
 
     <?php } ?>

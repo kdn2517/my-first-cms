@@ -41,6 +41,11 @@ class Article
     */
     public $content50char = null;
     /**
+    * @var int активность статьи (1 - статья активна, показывается на главной
+    * странице; 0 - статья не активна, видит только админ)
+    */
+    public $activeArticle = null;
+    /**
     * Устанавливаем свойства с помощью значений в заданном массиве
     *
     * @param assoc Значения свойств
@@ -90,8 +95,14 @@ class Article
           $this->content = $data['content'];
           $this->content50char = mb_substr($data['content'], 0, 50) . '...';
       }
-    }
+      
+      if(isset($data['active'])) {
+          $this->activeArticle = $data['active'];
+      } else {
+          $this->activeArticle = 0;
+      }
 
+    }
 
     /**
     * Устанавливаем свойства с помощью значений формы редактирования записи в заданном массиве
@@ -151,7 +162,15 @@ class Article
             $categoryId=null, $order="publicationDate DESC") 
     {
         $conn = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);
-        $categoryClause = $categoryId ? "WHERE categoryId = :categoryId" : "";
+        
+        if($categoryId) {
+            $categoryClause = "WHERE categoryId = :categoryId";                 
+        } elseif(preg_match("/admin.php/", $_SERVER['REQUEST_URI'])) {
+            $categoryClause = '';
+        } else {
+            $categoryClause = 'WHERE active = 1';
+        }
+
         $sql = "SELECT SQL_CALC_FOUND_ROWS *, UNIX_TIMESTAMP(publicationDate) 
                 AS publicationDate
                 FROM articles $categoryClause
@@ -207,13 +226,14 @@ class Article
 
         // Вставляем статью
         $conn = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-        $sql = "INSERT INTO articles ( publicationDate, categoryId, title, summary, content ) VALUES ( FROM_UNIXTIME(:publicationDate), :categoryId, :title, :summary, :content )";
+        $sql = "INSERT INTO articles ( publicationDate, categoryId, title, summary, content, active ) VALUES ( FROM_UNIXTIME(:publicationDate), :categoryId, :title, :summary, :content, :active)";
         $st = $conn->prepare ( $sql );
         $st->bindValue( ":publicationDate", $this->publicationDate, PDO::PARAM_INT );
         $st->bindValue( ":categoryId", $this->categoryId, PDO::PARAM_INT );
         $st->bindValue( ":title", $this->title, PDO::PARAM_STR );
         $st->bindValue( ":summary", $this->summary, PDO::PARAM_STR );
         $st->bindValue( ":content", $this->content, PDO::PARAM_STR );
+        $st->bindValue(":active", $this->activeArticle, PDO::PARAM_INT);
         $st->execute();
         $this->id = $conn->lastInsertId();
         $conn = null;
@@ -229,7 +249,7 @@ class Article
 
       // Обновляем статью
       $conn = new PDO( DB_DSN, DB_USERNAME, DB_PASSWORD );
-      $sql = "UPDATE articles SET publicationDate=FROM_UNIXTIME(:publicationDate), categoryId=:categoryId, title=:title, summary=:summary, content=:content WHERE id = :id";
+      $sql = "UPDATE articles SET publicationDate=FROM_UNIXTIME(:publicationDate), categoryId=:categoryId, title=:title, summary=:summary, content=:content, active=:active WHERE id = :id";
       $st = $conn->prepare ( $sql );
       $st->bindValue( ":publicationDate", $this->publicationDate, PDO::PARAM_INT );
       $st->bindValue( ":categoryId", $this->categoryId, PDO::PARAM_INT );
@@ -237,6 +257,7 @@ class Article
       $st->bindValue( ":summary", $this->summary, PDO::PARAM_STR );
       $st->bindValue( ":content", $this->content, PDO::PARAM_STR );
       $st->bindValue( ":id", $this->id, PDO::PARAM_INT );
+      $st->bindValue(":active", $this->activeArticle, PDO::PARAM_INT);
       $st->execute();
       $conn = null;
     }

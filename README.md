@@ -28,3 +28,6 @@
    6) Следуем инструкциям http://fkn.ktu10.com/?q=node/9428
 
 Удачной разработки!
+
+Для второго практического задания добавляем новый столбец в таблицу:
+ALTER TABLE `articles` ADD `active` TINYINT(1) NOT NULL AFTER `content`;
