@@ -37,7 +37,7 @@ class Article
     */
     public $content = null;
     /**
-    * @var string HTML первые 50 символов статьи
+    * @var string первые 50 символов статьи
     */
     public $content50char = null;
     /**
@@ -88,7 +88,7 @@ class Article
       
       if (isset($data['content'])) {
           $this->content = $data['content'];
-          $this->content50char = mb_strimwidth($data['content'], 0, 50) . '...';
+          $this->content50char = mb_substr($data['content'], 0, 50) . '...';
       }
     }
 
