@@ -156,24 +156,31 @@ class Article
     * @param int $numRows Количество возвращаемых строк (по умолчанию = 1000000)
     * @param int $categoryId Вернуть статьи только из категории с указанным ID
     * @param string $order Столбец, по которому выполняется сортировка статей (по умолчанию = "publicationDate DESC")
+    * @param int $useActiveValue отвечает за активность статьи: 1 - активна, 
+    * видят все пользователи, 0 - не активна, видит только админ
     * @return Array|false Двух элементный массив: results => массив объектов Article; totalRows => общее количество строк
     */
     public static function getList($numRows=1000000, 
-            $categoryId=null, $order="publicationDate DESC") 
+                                   $categoryId=null,
+                                   $useActiveValue = false, 
+                                   $order="publicationDate DESC") 
     {
         $conn = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);
         
-        if($categoryId) {
-            $categoryClause = "WHERE categoryId = :categoryId";                 
-        } elseif(preg_match("/admin.php/", $_SERVER['REQUEST_URI'])) {
-            $categoryClause = '';
+        if($useActiveValue === false) {
+            $clause = $categoryId ? "WHERE categoryId = :categoryId" : "";
         } else {
-            $categoryClause = 'WHERE active = 1';
+            if($categoryId) {
+                $clause = "WHERE categoryId = :categoryId AND active = " . 
+                                                                $useActiveValue;
+            } else {
+                $clause = "WHERE active = " . $useActiveValue;
+            }
         }
-
+       
         $sql = "SELECT SQL_CALC_FOUND_ROWS *, UNIX_TIMESTAMP(publicationDate) 
                 AS publicationDate
-                FROM articles $categoryClause
+                FROM articles $clause
                 ORDER BY  $order  LIMIT :numRows";
         
         $st = $conn->prepare($sql);
