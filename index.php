@@ -20,15 +20,10 @@ function archive()
 {
     $results = [];
     
-    $categoryId = ( isset( $_GET['categoryId'] ) && $_GET['categoryId'] ) ? (int)$_GET['categoryId'] : null;
+    $categoryId = (isset($_GET['categoryId']) && $_GET['categoryId']) ? (int)$_GET['categoryId'] : null;
     
-    $results['category'] = Category::getById( $categoryId );
-    
-    /* ПР2 использовал $categoryId вместо 
-     * $results['category'] ? $results['category']->id : null
-     * потому что, на мой взгляд, это равнозначные значения.
-     */
-    
+    $results['category'] = Category::getById($categoryId);
+       
     $data = Article::getList(100000, $categoryId, 1);
     
     $results['articles'] = $data['results'];
@@ -37,14 +32,14 @@ function archive()
     $data = Category::getList();
     $results['categories'] = array();
     
-    foreach ( $data['results'] as $category ) {
+    foreach ($data['results'] as $category) {
         $results['categories'][$category->id] = $category;
     }
     
     $results['pageHeading'] = $results['category'] ?  $results['category']->name : "Article Archive";
     $results['pageTitle'] = $results['pageHeading'] . " | Widget News";
     
-    require( TEMPLATE_PATH . "/archive.php" );
+    require(TEMPLATE_PATH . "/archive.php");
 }
 
 /**
@@ -54,7 +49,7 @@ function archive()
  */
 function viewArticle() 
 {   
-    if ( !isset($_GET["articleId"]) || !$_GET["articleId"] ) {
+    if (!isset($_GET["articleId"]) || !$_GET["articleId"]) {
       homepage();
       return;
     }
@@ -84,11 +79,6 @@ function homepage()
     } 
     
     $results['pageTitle'] = "Простая CMS на PHP";
-    
-//    echo "<pre>";
-//    print_r($data);
-//    echo "</pre>";
-//    die();
     
     require(TEMPLATE_PATH . "/homepage.php");
     

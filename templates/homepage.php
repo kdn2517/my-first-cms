@@ -7,15 +7,18 @@
                     <?php echo date('j F', $article->publicationDate)?>
                 </span>
                 
-                <a href=".?action=viewArticle&amp;articleId=<?php echo $article->id?>">
-                    <?php echo htmlspecialchars( $article->title )?>
+                <a href=".?action=viewArticle&amp;articleId=<?php 
+                                                           echo $article->id?>">
+                    <?php echo htmlspecialchars($article->title)?>
                 </a>
                 
                 <?php if (isset($article->categoryId)) { ?>
                     <span class="category">
                         in 
-                        <a href=".?action=archive&amp;categoryId=<?php echo $article->categoryId?>">
-                            <?php echo htmlspecialchars($results['categories'][$article->categoryId]->name )?>
+                        <a href=".?action=archive&amp;categoryId=<?php 
+                                                   echo $article->categoryId?>">
+                            <?php echo htmlspecialchars($results['categories']
+                                                 [$article->categoryId]->name)?>
                         </a>
                     </span>
                 <?php } 
@@ -25,10 +28,16 @@
                     </span>
                 <?php } ?>
             </h2>
-            <p class="summary"><?php echo htmlspecialchars($article->content50char)?></p>
+            <p class="summary"><?php 
+                            echo htmlspecialchars($article->content50char)?></p>
             <img id="loader-identity" src="JS/ajax-loader.gif" alt="gif">
-            <a href=".?action=viewArticle&amp;articleId=<?php echo $article->id?>" class="showContentPOSTmethod" data-contentId="<?php echo $article->id?>">Запросить методом POST</a>
-            <a href=".?action=viewArticle&amp;articleId=<?php echo $article->id?>" class="showContent" data-contentId="<?php echo $article->id?>">Показать полностью</a>
+            <a href=".?action=viewArticle&amp;articleId=<?php 
+                echo $article->id?>" class="showContentPOSTmethod" 
+                data-contentId="<?php 
+                                echo $article->id?>">Запросить методом POST</a>
+            <a href=".?action=viewArticle&amp;articleId=<?php 
+                echo $article->id?>" class="showContent" 
+                data-contentId="<?php echo $article->id?>">Показать полностью</a>
         </li>
     <?php } ?>
     </ul>
