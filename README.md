@@ -35,3 +35,9 @@ ALTER TABLE articles ADD active TINYINT NOT NULL DEFAULT '1'
 COMMENT 'active отвечает за активность статьи: 
 1 - активна, видят все пользователи, 
 0 - не активна, видит только админ' AFTER content;
+
+ПР3
+CREATE TABLE users (login VARCHAR(25) NOT NULL , password VARCHAR(25) NOT NULL, 
+active TINYINT NOT NULL DEFAULT '0', PRIMARY KEY (login)) COMMENT 'таблица 
+пользователей - логин и пароль. Active - актуальность записи (разрешен ли вход 
+по этому логину), редактируется админом';

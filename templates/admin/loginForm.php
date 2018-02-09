@@ -12,7 +12,7 @@
 
             <li>
                 <label for="username">Username</label>
-                <input type="text" name="username" id="username" 
+                <input type="text" name="userName" id="username" 
                        placeholder="Your admin username" required autofocus 
                        maxlength="20" />
             </li>
