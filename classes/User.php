@@ -33,8 +33,10 @@ class User
             $this->active = 0;
         }
     }
-/*
+/**
  * функция для показа всех пользователей
+ * return array (array 'results' => информация о всех пользователях, 'totalRows'
+ * => кольичество пользователей)
  */    
     public static function getList() 
     {
@@ -60,8 +62,10 @@ class User
             ) 
         );
     }
-/*
+/**
  * поиск пользователя по логину
+ * @param string=9 $login логин
+ * @return User 
  */
     public static function getByLogin($login) 
     {
@@ -78,9 +82,13 @@ class User
             return new User($row);
         }
     }
-/*
- * функция для изменения свойств пользователя
- */    
+
+ /**
+  * функция для изменения свойств пользователя
+  * @param array $params введенные данные формы
+  * @return true если введенный логин уже занят, ничего не возвращает (return 
+  * null), если логин не занят, изменения сохранены
+  */
     public function update($params) 
     {        
 /*
@@ -107,7 +115,12 @@ class User
       $st->execute();
       $conn = null;
     }
-    
+/**
+  * функция для изменения свойств пользователя
+  * @param array $params введенные данные формы
+  * @return true если введенный логин уже занят, ничего не возвращает (return 
+  * null), если логин не занят, изменения сохранены
+  */    
     public function insert($params) 
     {
 // проверяем логин на уникальность - если такого логина нет в базе - сохраняем, 
@@ -125,7 +138,9 @@ class User
         $st->execute();
         $conn = null;
     }
-    
+ /**
+  * Удаление пользователя
+  */   
     public function delete() 
     {
       $conn = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);

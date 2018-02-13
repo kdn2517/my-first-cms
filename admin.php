@@ -332,13 +332,13 @@ function deleteCategory()
 
 
 
-/*
+/**
  * Работа с пользователями
  */
   
-/*
+/**
  * Показать всех пользователей
- */
+ */ 
 function listUsers()
 {
     $results = array();
@@ -362,7 +362,7 @@ function listUsers()
     require(TEMPLATE_PATH . "/admin/listUsers.php");  
 }
 
-/*
+/**
  * Новый пользователь
  */
 function newUser()
@@ -374,9 +374,7 @@ function newUser()
     if (isset($_POST['saveChanges'])) {
         
         $user = new User($_POST);         
-/*
- * если логин существует - пишем об этом, если нет - сохраняем
- */        
+// если логин существует - пишем об этом, если нет - сохраняем   
         if ($user->insert($_POST)) {
 // логин занят
             header("Location: admin.php?action=newUser&error=loginExists");
@@ -411,10 +409,8 @@ function editUser()
 
         $user = new User($_POST);
         
-/*
- * если пользователь меняет логин на занятый выводим форму вновь, если логин 
- * не занят - сохраняем
- */
+// если пользователь меняет логин на занятый выводим форму вновь, если логин 
+// не занят - сохраняем
         if ($user->update($_POST)) {
  // логин занят
            header("Location: admin.php?action=editUser&error=loginExists&"
@@ -436,11 +432,12 @@ function editUser()
     }
 }
 
-/*
+/**
  * Удалить пользователя
  */
 function deleteUser()
 {
+// проверяем существует ли такой пользователь
     if (!$user = User::getByLogin($_GET['userLogin'])) {
         header("Location: admin.php?action=listUsers&error=userNotFound");
         return;
