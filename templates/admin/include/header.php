@@ -4,6 +4,7 @@
                             echo htmlspecialchars($_SESSION['userName']) ?></b>.
         <a href="admin.php?action=listArticles">Edit Articles</a> 
         <a href="admin.php?action=listCategories">Edit Categories</a>
+        <a href="admin.php?action=listSubcategories">Edit Subcategories</a>
         
         <?php if ($_SESSION['userName'] === 'admin') { ?>
                 <a href="admin.php?action=listUsers">Edit User</a> 

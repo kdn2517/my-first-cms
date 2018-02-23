@@ -41,3 +41,18 @@ CREATE TABLE users (login VARCHAR(25) NOT NULL , password VARCHAR(25) NOT NULL,
 active TINYINT NOT NULL DEFAULT '0', PRIMARY KEY (login)) COMMENT 'таблица 
 пользователей - логин и пароль. Active - актуальность записи (разрешен ли вход 
 по этому логину), редактируется админом';
+
+ПР4
+Создаю таблицу подкатегорий
+CREATE TABLE cms.subcategories (id SMALLINT(5) NOT NULL AUTO_INCREMENT, name
+VARCHAR(255) NOT NULL, description TEXT NOT NULL, category SMALLINT(5) NOT NULL 
+DEFAULT '777', PRIMARY KEY (id)) ENGINE = MyISAM CHARSET=utf8 COLLATE
+utf8_general_ci COMMENT 'таблица подкатегорий - номер, название, краткое 
+описание и к какой категории относится (по умолчанию - без категории)';
+
+Вставляю соответствующую категорию с id 777 и именем 'без категории':
+INSERT INTO categories (id, name, description) VALUES ('7777', 'без категории', '')
+
+Вставляю столбец с подкатегориями в таблицу со статьями:
+ALTER TABLE articles ADD subcategoryId SMALLINT(5) NOT NULL DEFAULT '777' AFTER 
+categoryId;

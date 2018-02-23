@@ -1,7 +1,7 @@
 <?php include "templates/include/header.php" ?>
 	<?php include "templates/admin/include/header.php" ?>
 	  
-            <h1>Article Categories</h1>
+            <h1>Article Subcategories</h1>
 	  
 	<?php if ( isset( $results['errorMessage'] ) ) { ?>
 	        <div class="errorMessage"><?php 
@@ -16,15 +16,15 @@
 	  
             <table>
                 <tr>
-                    <th>Category</th>
+                    <th>Subcategory</th>
                 </tr>
 
-        <?php foreach ( $results['categories'] as $category ) { ?>
+        <?php foreach ( $results['subcategories'] as $subcategory ) { ?>
 
-                <tr onclick="location='admin.php?action=editCategory&amp;categoryId=<?php 
-                                                         echo $category->id?>'">
+                <tr onclick="location='admin.php?action=editSubcategory&amp;subcategoryId=<?php 
+                                                         echo $subcategory->id?>'">
                     <td>
-                        <?php echo $category->name?>
+                        <?php echo $subcategory->name?>
                     </td>
                 </tr>
 
@@ -32,9 +32,9 @@
 
             </table>
 
-            <p><?php echo $results['totalRows']?> categor<?php 
+            <p><?php echo $results['totalRows']?> subcategor<?php 
                 echo ($results['totalRows'] != 1) ? 'ies' : 'y' ?> in total.</p>
 
-            <p><a href="admin.php?action=newCategory">Add a New Category</a></p>
+            <p><a href="admin.php?action=newSubcategory">Add a New Subcategory</a></p>
 	  
 	<?php include "templates/include/footer.php" ?>

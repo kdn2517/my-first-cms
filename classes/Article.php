@@ -28,6 +28,11 @@ class Article
     public $categoryId = null;
 
     /**
+    * @var int ID подкатегории статьи
+    */
+    public $subcategoryId = null;
+    
+    /**
     * @var string Краткое описание статьи
     */
     public $summary = null;
@@ -54,7 +59,6 @@ class Article
      */
     public function __construct($data=array())
     {
-        
       if (isset($data['id'])) {
           $this->id = (int) $data['id'];
       }
@@ -71,6 +75,10 @@ class Article
       
       if (isset($data['categoryId'])) {
           $this->categoryId = (int) $data['categoryId'];      
+      }
+      
+      if (isset($data['subcategoryId'])) {
+          $this->subcategoryId = (int) $data['subcategoryId'];      
       }
       
       if (isset($data['summary'])) {
@@ -154,17 +162,28 @@ class Article
     */
     public static function getList($numRows=1000000, 
                                    $categoryId=null,
-                                   $useActiveValue = false, 
+                                   $useActiveValue = false,
+                                   $subcategoryId=null,
                                    $order="publicationDate DESC") 
     {
         $conn = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);
-        
+// подстраиваем выборку для выборки подкатегорий. Так как каждая категория имеет
+// категорию, то не имеет смысла фильтровать по категории и по подкатегории 
+// одновременно. Поэтому так:
         if($useActiveValue === false) {
-            $clause = $categoryId ? "WHERE categoryId = :categoryId" : "";
+            if($categoryId) {
+                $clause = "WHERE categoryId = :categoryId";
+            } elseif($subcategoryId) {
+                $clause = "wHERE subcategoryId = $subcategoryId";
+            } else {
+                $clause = "";
+            }
         } else {
             if($categoryId) {
                 $clause = "WHERE categoryId = :categoryId AND active = " . 
                                                                 $useActiveValue;
+            } elseif($subcategoryId) {
+                $clause = "WHERE subcategoryId = $subcategoryId AND active = $useActiveValue";
             } else {
                 $clause = "WHERE active = " . $useActiveValue;
             }
@@ -215,12 +234,13 @@ class Article
 
         // Вставляем статью
         $conn = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);
-        $sql = "INSERT INTO articles (publicationDate, categoryId, title, "
+        $sql = "INSERT INTO articles (publicationDate, categoryId, subcategoryId, title, "
                 . "summary, content, active) VALUES (FROM_UNIXTIME(:publicationDate), "
-                . ":categoryId, :title, :summary, :content, :active)";
+                . ":categoryId, :subcategoryId, :title, :summary, :content, :active)";
         $st = $conn->prepare($sql);
         $st->bindValue(":publicationDate", $this->publicationDate, PDO::PARAM_INT);
         $st->bindValue(":categoryId", $this->categoryId, PDO::PARAM_INT);
+        $st->bindValue(":subcategoryId", $this->subcategoryId, PDO::PARAM_INT);
         $st->bindValue(":title", $this->title, PDO::PARAM_STR);
         $st->bindValue(":summary", $this->summary, PDO::PARAM_STR);
         $st->bindValue(":content", $this->content, PDO::PARAM_STR);
@@ -243,11 +263,13 @@ class Article
       // Обновляем статью
       $conn = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);
       $sql = "UPDATE articles SET publicationDate=FROM_UNIXTIME(:publicationDate),"
-              . " categoryId=:categoryId, title=:title, summary=:summary, "
-              . "content=:content, active=:active WHERE id = :id";
+              . " categoryId=:categoryId, subcategoryId=:subcategoryId,"
+              . " title=:title, summary=:summary, content=:content,"
+              . " active=:active WHERE id = :id";
       $st = $conn->prepare($sql);
       $st->bindValue(":publicationDate", $this->publicationDate, PDO::PARAM_INT);
       $st->bindValue(":categoryId", $this->categoryId, PDO::PARAM_INT);
+      $st->bindValue(":subcategoryId", $this->subcategoryId, PDO::PARAM_INT);
       $st->bindValue(":title", $this->title, PDO::PARAM_STR);
       $st->bindValue(":summary", $this->summary, PDO::PARAM_STR);
       $st->bindValue(":content", $this->content, PDO::PARAM_STR);

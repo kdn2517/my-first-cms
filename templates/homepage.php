@@ -14,7 +14,7 @@
                 
                 <?php if (isset($article->categoryId)) { ?>
                     <span class="category">
-                        in 
+                        Категория 
                         <a href=".?action=archive&amp;categoryId=<?php 
                                                    echo $article->categoryId?>">
                             <?php echo htmlspecialchars($results['categories']
@@ -26,6 +26,16 @@
                     <span class="category">
                         <?php echo "Без категории"?>
                     </span>
+                <?php } ?>
+                <?php if (isset($article->categoryId)) { ?>
+                <span class="category">
+                    Подкатегория 
+                    <a href=".?action=viewArticleSubcategory&amp;subcategoryId=<?php 
+                                                echo $article->subcategoryId?>">
+                        <?php echo htmlspecialchars($results['subcategories']
+                                              [$article->subcategoryId]->name)?>
+                    </a>
+                </span>
                 <?php } ?>
             </h2>
             <p class="summary"><?php 
