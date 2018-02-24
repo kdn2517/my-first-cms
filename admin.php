@@ -132,9 +132,8 @@ function newArticle()
     if (isset($_POST['saveChanges'])) {
 // проверяем - принадлежит ли подкатегория заявленной категории. исключение - 
 // "без подкатегории" может принадлежать любой категории
-        if($_POST['subcategoryId'] != 777) {
-            $category = Subcategory::getById($_POST['subcategoryId'])->category;
-            if($category != $_POST['categoryId']) {
+        $category = Subcategory::getById($_POST['subcategoryId'])->category;
+        if($_POST['subcategoryId'] != 777 && $category != $_POST['categoryId']) {
 //выдаем ошибку и возвращаем
                 $results['errorMessage'] = "Данная подкатегория не принадлежит "
                         . "выбранной категории";
@@ -142,13 +141,14 @@ function newArticle()
                 $results['categories'] = $data['results'];
 //делаем выборку всех подкатегорий для отображения в выпадающем списке
                 $inf = Subcategory::getList();
-                $results['subcategories'] = $inf['results'];  
-                require(TEMPLATE_PATH . "/admin/editArticle.php");
-            }
+                $results['subcategories'] = $inf['results'];
+        $data = User::getList();
+        $results['authors'] = $data['results'];  
+                require(TEMPLATE_PATH . "/admin/editArticle.php");   
         } else {
         // Пользователь получает форму редактирования статьи: сохраняем новую 
         // статью
-        $article = new Article();
+        $article = new Article($_POST);       
         $article->storeFormValues($_POST);
 
 //            А здесь данные массива $article уже неполные(есть только Число от 
@@ -167,6 +167,8 @@ function newArticle()
         $results['article'] = new Article;
         $data = Category::getList();
         $results['categories'] = $data['results'];
+        $data = User::getList();
+        $results['authors'] = $data['results'];
 //делаем выборку всех подкатегорий для отображения в выпадающем списке
         $inf = Subcategory::getList();
         $results['subcategories'] = $inf['results'];       
@@ -181,39 +183,39 @@ function newArticle()
  * @return null
  */
 function editArticle() 
-{	  
+{
     $results = array();
     $results['pageTitle'] = "Edit Article";
     $results['formAction'] = "editArticle";
 
-    if (isset( $_POST['saveChanges'])) {
+    if (isset( $_POST['saveChanges'])) {        
 // проверяем - принадлежит ли подкатегория заявленной категории. исключение - 
 // "без подкатегории" может принадлежать любой категории
-        if($_POST['subcategoryId'] != 777) {
-            $category = Subcategory::getById($_POST['subcategoryId'])->category;
-            if($category != $_POST['categoryId']) {
+        $category = Subcategory::getById($_POST['subcategoryId'])->category;
+        if($_POST['subcategoryId'] != 777 && $category != $_POST['categoryId']) {
 //выдаем ошибку и возвращаем
                 $results['errorMessage'] = "Данная подкатегория не принадлежит "
-                        . "выбранной категории";                
+                        . "выбранной категории"; 
+                $data = User::getList();
+                $results['authors'] = $data['results'];
                 $data = Category::getList();
                 $results['categories'] = $data['results'];
 //делаем выборку всех подкатегорий для отображения в выпадающем списке
                 $inf = Subcategory::getList();
                 $results['subcategories'] = $inf['results'];  
                 require(TEMPLATE_PATH . "/admin/editArticle.php");
-            } else {
+        } else {
 // Пользователь получил форму редактирования статьи: сохраняем изменения
-                if (!$article = Article::getById((int)$_POST['articleId'])) {
+                if (!$article = Article::getById((int)$_POST['articleId'], 
+                                                           $_POST['authors'])) {
                    header("Location: admin.php?error=articleNotFound");
                    return;
                 }
-            
-              }
-            }
-        $article->storeFormValues($_POST);
-        $article->update();
-        header("Location: admin.php?status=changesSaved");
-
+                
+            $article->storeFormValues($_POST);
+            $article->update();
+            header("Location: admin.php?status=changesSaved");
+        }
     } elseif (isset($_POST['cancel'])) {
 
         // Пользователь отказался от результатов редактирования: возвращаемся к 
@@ -225,9 +227,11 @@ function editArticle()
         $results['article'] = Article::getById((int)$_GET['articleId']);
         $data = Category::getList();
         $results['categories'] = $data['results'];
+        $data = User::getList();
+        $results['authors'] = $data['results'];
 //делаем выборку всех подкатегорий для отображения в выпадающем списке
-        $inf = Subcategory::getList();
-        $results['subcategories'] = $inf['results'];  
+        $data = Subcategory::getList();
+        $results['subcategories'] = $data['results'];  
         require(TEMPLATE_PATH . "/admin/editArticle.php");
     }
 
@@ -261,6 +265,11 @@ function listArticles()
     $results['subcategories'] = array();
     foreach ($inf['results'] as $subcategory)
                      $results['subcategories'][$subcategory->id] = $subcategory;
+    $data = User::getList();
+    $results['users'] = array();
+    foreach($data['results'] as $user) {
+        $results['users'][$user->id] = $user;
+    }
     $results['pageTitle'] = "All Articles";
     if (isset($_GET['error'])) {
         if ($_GET['error'] == "articleNotFound") 

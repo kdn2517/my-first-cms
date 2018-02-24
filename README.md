@@ -55,4 +55,16 @@ INSERT INTO categories (id, name, description) VALUES ('7777', 'без кате�
 
 Вставляю столбец с подкатегориями в таблицу со статьями:
 ALTER TABLE articles ADD subcategoryId SMALLINT(5) NOT NULL DEFAULT '777' AFTER 
-categoryId;
+categoryId
+
+ПР5
+Для выполнения этого задания для начала добавим в таблицу users столбец id. Для 
+этого с начала удалим первичный ключ с другого столбца.
+ALTER TABLE users DROP PRIMARY KEY;
+ALTER TABLE users ADD id INT(10) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (id);
+
+Теперь создаем новую таблицу связи статья - пользователь. Первичным ключем 
+выступить стороннее значение.
+CREATE TABLE cms.users_articles (id SMALLINT(10) NOT NULL AUTO_INCREMENT, 
+user SMALLINT(10) NOT NULL, article SMALLINT(10) NOT NULL, PRIMARY KEY(id)) 
+ENGINE = MyISAM;

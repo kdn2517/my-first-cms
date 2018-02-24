@@ -21,6 +21,7 @@ if($_POST){
     } else {
         $activeArticle = 0;
     }
+    $authors = $_POST['authors'];
 } else {
     $articleId = $results['article']->id;
     $title = $results['article']->title;
@@ -30,7 +31,8 @@ if($_POST){
     $subcategoryId = $results['article']->subcategoryId;
     $publicationDate = $results['article']->publicationDate;
     $activeArticle = $results['article']->activeArticle;
-}
+    $authors = $results['article']->authors;
+} var_dump($results['article']->authors);
 ?>
 
         <h1><?php echo $results['pageTitle']?></h1>
@@ -102,7 +104,27 @@ if($_POST){
                   <option value="<?php echo $subcategory->id?>"<?php 
                     echo ($subcategory->id == $subcategoryId) 
                                                            ? " selected" : ""?>>
-                        <?php echo htmlspecialchars( $subcategory->name )?>
+                        <?php echo htmlspecialchars($subcategory->name)?>
+                  </option>
+                <?php } ?>
+                </select>
+              </li>
+              
+              <li>  
+                <label for="authors[]">Autors</label>
+                <select name="authors[]" multiple>
+                <?php               
+                foreach ($results['authors'] as $author) {
+                    if(!$authors[0]){
+                        $authors[] = 777;
+                    }?>
+                  <option value="<?php echo $author->id?>"<?php 
+                  foreach($authors as $oneAuthor) {
+                      echo ($author->id == $oneAuthor) ? " selected" : "";
+                  }?>>
+                    
+                        <?php 
+                      echo htmlspecialchars($author->login )?>
                   </option>
                 <?php } ?>
                 </select>

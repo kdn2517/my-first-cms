@@ -19,7 +19,8 @@
               <th>Publication Date</th>
               <th>Article</th>
               <th>Category</th>
-              <th>Subcategory<th>
+              <th>Subcategory</th>
+              <th>Autors</th>
               <th>Active</th>
             </tr>
             
@@ -49,6 +50,22 @@
                     echo $results['subcategories'][$article->subcategoryId]->name;                        
                 }
               ?>
+              </td>
+              
+              <td>
+                  
+              <?php 
+              
+                if(isset ($article->authors)) {
+                    $author = "";
+                    foreach($article->authors as $user){
+                        $author .= $results['users'][$user]->login . ", ";
+                    }
+                    $author = substr($author, 0, -2);
+                    echo $author;
+                }
+              ?>
+                              
               </td>
               
               <td>

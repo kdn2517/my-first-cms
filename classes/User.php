@@ -5,6 +5,10 @@
 class User
     {
     /**
+    * @var int id пользователя
+    */
+    public $id = null;
+    /**
     * @var string логин пользователя
     */
     public $login = null;
@@ -19,6 +23,10 @@ class User
     
     public function __construct($data = [])
     {
+        if (isset($data['id'])) {
+            $this->id = (int) $data['id'];
+        }
+        
         if (isset($data['login'])) {
             $this->login = $data['login'];
         }
@@ -48,7 +56,7 @@ class User
         
         $list = array();
 
-        while ($row = $st->fetch()) {
+        while ($row = $st->fetch()) {    
             $user = new User($row);
             $list[] = $user;
         }
@@ -63,10 +71,27 @@ class User
         );
     }
 /**
- * поиск пользователя по логину
- * @param string=9 $login логин
+ * поиск пользователя по id
+ * @param id id пользователя
  * @return User 
  */
+    
+    public static function getById($id) 
+    {
+        $conn = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);
+        $sql = "SELECT * FROM users WHERE id = :id";
+        $st = $conn->prepare($sql);
+        $st->bindValue(":id", $id, PDO::PARAM_STR);
+        $st->execute();
+
+        $row = $st->fetch();
+        $conn = null;
+        
+        if ($row) { 
+            return new User($row);
+        }
+    }
+    
     public static function getByLogin($login) 
     {
         $conn = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);
@@ -146,6 +171,9 @@ class User
       $conn = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);
       $st = $conn->prepare("DELETE FROM users WHERE login = :login LIMIT 1");
       $st->bindValue(":login", $this->login, PDO::PARAM_STR);
+      $st->execute();
+      $st = $conn->prepare("DELETE FROM users_aritcles WHERE user = :id");
+      $st->bindValue(":id", $this->id, PDO::PARAM_INT);
       $st->execute();
       $conn = null;
     }

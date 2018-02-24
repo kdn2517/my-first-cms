@@ -37,6 +37,20 @@
                     </a>
                 </span>
                 <?php } ?>
+                
+                <?php if (isset($article->authors)) { ?>
+                <span class="category">
+                    Авторы: 
+                    <?php 
+                    foreach($article->authors as $user) { ?>
+                    <a href=".?action=viewArticleAuthor&amp;authorId=<?php
+                                                            echo $user?>">
+                    <?php            
+                        echo $results['authors'][$user]->login . ", ";
+                    ?>
+                    </a><?php } ?>
+                </span>
+                <?php } ?>
             </h2>
             <p class="summary"><?php 
                             echo htmlspecialchars($article->content50char)?></p>
