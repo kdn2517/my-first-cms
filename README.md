@@ -68,3 +68,15 @@ ALTER TABLE users ADD id INT(10) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY 
 CREATE TABLE cms.users_articles (id SMALLINT(10) NOT NULL AUTO_INCREMENT, 
 user SMALLINT(10) NOT NULL, article SMALLINT(10) NOT NULL, PRIMARY KEY(id)) 
 ENGINE = MyISAM;
+
+меняем движек:
+ALTER TABLE users_articles engine=InnoDB;
+
+устанавливаем связь;
+ALTER TABLE `users_articles` ADD INDEX( `user`);
+ALTER TABLE `users` ADD UNIQUE( `id`);
+ALTER TABLE `users_articles` ADD INDEX( `article`);
+ALTER TABLE `articles` ADD UNIQUE( `id`);
+ALTER TABLE users_articles ADD FOREIGN KEY (user) REFERENCES users (id) ON DELETE RESTRICT ON UPDATE RESTRICT ;
+ALTER TABLE users_articles ADD FOREIGN KEY (article) REFERENCES articles (id) ON DELETE RESTRICT ON UPDATE RESTRICT ;
+

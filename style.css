@@ -37,7 +37,7 @@
 	  font-size: .8em;
 	}
         
-        #loader-identity {
+        .loader-identity {
             display : none;
             float : right;
         }

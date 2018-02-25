@@ -1,13 +1,16 @@
 // выводим идентификатор
-    function showLoaderIdentity() 
+   
+function showLoaderIdentity(content) 
     {
-        $("#loader-identity").show("slow");
+        var id = "#loader-identity" + content;
+        $(id).show("slow");
     }
 
     // скрываем идентификатор
-    function hideLoaderIdentity() 
+    function hideLoaderIdentity(content) 
     {
-       $("#loader-identity").hide();  
+       var id = "#loader-identity" + content;
+       $(id).hide();  
     }
 
 
