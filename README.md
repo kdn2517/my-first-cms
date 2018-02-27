@@ -31,7 +31,7 @@
 
 Практическое задание 2
 Для ПР2 добавляем новый столбец в таблицу:
-```
+```sql
 ALTER TABLE articles ADD active TINYINT NOT NULL DEFAULT '1' 
 COMMENT 'active отвечает за активность статьи: 
 1 - активна, видят все пользователи, 
@@ -39,7 +39,7 @@ COMMENT 'active отвечает за активность статьи:
 ```
 
 ПР3
-```
+```sql
 CREATE TABLE users (login VARCHAR(25) NOT NULL , password VARCHAR(25) NOT NULL, 
 active TINYINT NOT NULL DEFAULT '0', PRIMARY KEY (login)) COMMENT 'таблица 
 пользователей - логин и пароль. Active - актуальность записи (разрешен ли вход 
@@ -48,7 +48,7 @@ active TINYINT NOT NULL DEFAULT '0', PRIMARY KEY (login)) COMMENT 'таблиц�
 
 ПР4
 Создаю таблицу подкатегорий
-```
+```sql
 CREATE TABLE cms.subcategories (id SMALLINT(5) NOT NULL AUTO_INCREMENT, name
 VARCHAR(255) NOT NULL, description TEXT NOT NULL, category SMALLINT(5) NOT NULL 
 DEFAULT '777', PRIMARY KEY (id)) ENGINE = MyISAM CHARSET=utf8 COLLATE
@@ -57,52 +57,52 @@ utf8_general_ci COMMENT 'таблица подкатегорий - номер, �
 ```
 
 Вставляю соответствующую категорию с id 777 и именем 'без категории':
-```
+```sql
 INSERT INTO categories (id, name, description) VALUES ('7777', 'без категории', '')
 ```
 
 Вставляю столбец с подкатегориями в таблицу со статьями:
-```
+```sql
 ALTER TABLE articles ADD subcategoryId SMALLINT(5) NOT NULL DEFAULT '777' AFTER 
 categoryId
 ```
 ПР5
 Для выполнения этого задания для начала добавим в таблицу users столбец id. Для 
 этого с начала удалим первичный ключ с другого столбца.
-```
+```sql
 ALTER TABLE users DROP PRIMARY KEY;
 ```
-```
+```sql
 ALTER TABLE users ADD id INT(10) NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY (id);
 ```
 Теперь создаем новую таблицу связи статья - пользователь. Первичным ключем 
 выступить стороннее значение.
-```
+```sql
 CREATE TABLE cms.users_articles (id SMALLINT(10) NOT NULL AUTO_INCREMENT, 
 user SMALLINT(10) NOT NULL, article SMALLINT(10) NOT NULL, PRIMARY KEY(id)) 
 ENGINE = MyISAM;
 ```
 
 меняем движек:
-```
+```sql
 ALTER TABLE users_articles engine=InnoDB;
 ```
 устанавливаем связь;
-```
+```sql
 ALTER TABLE `users_articles` ADD INDEX( `user`);
 ```
-```
+```sql
 ALTER TABLE `users` ADD UNIQUE( `id`);
 ```
-```
+```sql
 ALTER TABLE `users_articles` ADD INDEX( `article`);
 ```
-```
+```sql
 ALTER TABLE `articles` ADD UNIQUE( `id`);
 ```
-```
+```sql
 ALTER TABLE users_articles ADD FOREIGN KEY (user) REFERENCES users (id) ON DELETE RESTRICT ON UPDATE RESTRICT ;
 ```
-```
+```sql
 ALTER TABLE users_articles ADD FOREIGN KEY (article) REFERENCES articles (id) ON DELETE RESTRICT ON UPDATE RESTRICT ;
 ```
