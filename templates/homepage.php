@@ -73,8 +73,9 @@
                 data-contentId="<?php 
                                 echo $article->id?>">Запросить методом GET</a>
 
-            <p id="loadArticle" style="cursor:pointer" 
-                                 data-contentId="<?=$article->id?>">NEW POST</p>
+            <p id="loadArticle<?=$article->id?>" class="loadArticle"
+               style="cursor:pointer" data-contentId="<?=$article->id?>">
+                                                                    NEW POST</p>
             <div class="summary" id="article<?=$article->id?>">
             </div>
             
@@ -86,5 +87,6 @@
     </ul>
     <p><a href="./?action=archive">Article Archive</a></p>
 <?php include "templates/include/footer.php" ?>
+
 
 <script src="/JS/showContent.js"></sctipt> 

@@ -1,6 +1,6 @@
 $(document).ready(function ()
 {
-    $("#loadArticle").bind("click", function () {
+    $(".loadArticle").bind("click", function () {
         var articleId = $(this).attr('data-contentId');
         $.ajax({
 
