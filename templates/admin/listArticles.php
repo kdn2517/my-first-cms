@@ -54,17 +54,21 @@
               
               <td>
                   
-              <?php 
-              
-                if(isset ($article->authors)) {
-                    $author = "";
-                    foreach($article->authors as $user){
-                        $author .= $results['users'][$user]->login . ", ";
+                <?php
+                    $total = count($article->authors);
+                    $counter = 0;
+                    foreach ($article->authors as $key => $author) {
+                ?>
+                        <a href=".?action=viewArticleAuthor&amp;author=<?php 
+                                                               echo $author ?>">
+                        <?php
+                            echo $author;
+                            $counter++;
+                            if ($counter != $total) {
+                                echo ', ';
+                            }
                     }
-                    $author = substr($author, 0, -2);
-                    echo $author;
-                }
-              ?>
+                        ?>
                               
               </td>
               

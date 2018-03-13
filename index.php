@@ -81,7 +81,7 @@ function viewArticleSubcategory() {
 function viewArticleAuthor() {    
     $results = [];
 
-    $results['author'] = User::getById($_GET['authorId']);
+    $results['author'] = User::getByLogin($_GET['author']);
     
     $data = Article::getList(100000, null, 1, null, $results['author']->id);
 

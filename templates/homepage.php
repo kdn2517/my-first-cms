@@ -44,19 +44,24 @@
                 </span>
                 <?php } ?>
                 
-                <?php if (isset($article->authors)) { ?>
+                <?php if (isset($article->authors)) { ?>  
                 <span class="category">
-                    Авторы: 
-                    <?php 
-                    foreach($article->authors as $user) { ?>
-                    <a href=".?action=viewArticleAuthor&amp;authorId=<?php
-                                                            echo $user?>">
-                    <?php            
-                        echo $results['authors'][$user]->login . ", ";
-                    ?>
+                    Авторы:
+                     <?php 
+                        $total = count($article->authors);
+                        $counter = 0;
+                        foreach($article->authors as $key => $author) { ?>
+                            <a href=".?action=viewArticleAuthor&amp;author=<?php
+                                                                echo $author?>">
+                            <?php echo $author;
+                            $counter++;
+                            if($counter != $total){
+                                echo ', ';
+                            }
+                        }?>
                     </a><?php } ?>
                 </span>
-                <?php } ?>
+               
             </h2>
             <p class="summary"><?php 
                             echo htmlspecialchars($article->content50char)?></p>

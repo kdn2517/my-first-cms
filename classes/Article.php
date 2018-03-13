@@ -64,7 +64,7 @@ class Article
      * @param array $authors массив id авторов статьи, в конструкторе происходит
      *  перебор всех связей и остается только авторы даннай статьи
      */
-    public function __construct($data=array(), $authors=array())
+    public function __construct($data=array())
     {        
       if (isset($data['id'])) {
           $this->id = (int) $data['id'];
@@ -87,17 +87,9 @@ class Article
       if (isset($data['subcategoryId'])) {
           $this->subcategoryId = (int) $data['subcategoryId'];      
       }
-// делаем перебор, подходящих оставляем      
-      if (isset($authors)) {
-        foreach($authors as $author){
-            if(isset($author['article'])) {
-                if ($author['article'] == $this->id) {
-                    $this->authors[] = $author['user'];
-                } 
-            } else { 
-                $this->authors[] = $author;
-            }
-        }
+      
+      if (isset($data['users_name'])) {
+        $this->authors = explode(', ', $data['users_name']);
       }
       
       if (isset($data['summary'])) {
@@ -203,81 +195,60 @@ class Article
                                    $order="publicationDate DESC") 
     {
         $conn = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);
-// если нужно вывести только статьи определенного автора, то добавляем условие
-        if($author != null) {
-            $clauseAuthor = "WHERE user = $author";
-        } else {
-            $clauseAuthor = "";
-        }
-// делаем запрос для отображения авторов статьи
-        $sql = "SELECT * FROM users_articles $clauseAuthor";
-        $query = $conn->prepare($sql);
-        $query->execute();
-        $autors = array();
-        while($data = $query->fetch()){
-            $authors[] = $data;
-        }
-// выбираем статьи одного автора
-        if($author != null) {
-            $clauseAuthors = " AND ";
-            foreach($authors as $author) {
-                $clauseAuthors .= "id=" . $author['article'] . " OR ";
-            }
-            $clauseAuthors = substr($clauseAuthors, 0, -3);
-        }
-// подстраиваем выборку для выборки подкатегорий. Так как каждая категория имеет
-// категорию, то не имеет смысла фильтровать по категории и по подкатегории 
-// одновременно. Поэтому так:
+
+// подстраиваем выборку для выборки подкатегорий. Так как каждая подкатегория 
+// имеет категорию, то не имеет смысла фильтровать по категории и по 
+// подкатегории одновременно. Статьи определенного автора выводим только 
+// активные, без других сортировок.Поэтому так:
         if($useActiveValue === false) {
             if($categoryId) {
-                $clause = "WHERE categoryId = :categoryId";
+                $clause = "WHERE a.categoryId = :categoryId";
             } elseif($subcategoryId) {
-                $clause = "wHERE subcategoryId = $subcategoryId";
+                $clause = "wHERE a.subcategoryId = $subcategoryId";
             } else {
                 $clause = "";
             }
         } else {
             if($categoryId) {
-                $clause = "WHERE categoryId = :categoryId AND active = " . 
-                                                                $useActiveValue;
+                $clause = "WHERE a.categoryId = :categoryId "
+                        . "AND a.active =  $useActiveValue";
             } elseif($subcategoryId) {
-                $clause = "WHERE subcategoryId = $subcategoryId AND active = "
-                        . "$useActiveValue";
+                $clause = "WHERE a.subcategoryId = $subcategoryId "
+                        . "AND a.active = $useActiveValue";
+            } elseif($author){
+                $clause = "WHERE t1.user = $author "
+                        . "AND a.active = $useActiveValue";
             } else {
-                if(isset($clauseAuthors)) {
-// статьи одного автора мы не комбирируем с другими условиями, выводим только 
-// активные
-                    $clause = "WHERE active = " . $useActiveValue . 
-                                                                 $clauseAuthors; 
-                } else {
-                    $clause = "WHERE active = " . $useActiveValue;
+                    $clause = "WHERE a.active = " . $useActiveValue;
                 }
-            }
         }
        
-        $sql = "SELECT SQL_CALC_FOUND_ROWS *, UNIX_TIMESTAMP(publicationDate) 
-                AS publicationDate
-                FROM articles $clause
-                ORDER BY  $order  LIMIT :numRows";
-        
+//        
+          $sql = "SELECT SQL_CALC_FOUND_ROWS a.*, "
+                  . "UNIX_TIMESTAMP(a.publicationDate) AS publicationDate,"
+                  . "GROUP_CONCAT(users.login SEPARATOR ', ') as users_name "
+                  . "FROM articles AS a "
+                  . "LEFT JOIN users_articles AS t1 ON a.id=t1.article "
+                  . "LEFT JOIN users ON users.id=t1.user $clause "
+                  . "GROUP BY a.id ORDER BY :order LIMIT :numRows";
+    
         $st = $conn->prepare($sql);
         $st->bindValue(":numRows", $numRows, PDO::PARAM_INT);
+        $st->bindValue(":order", $order, PDO::PARAM_STR);
         
         if ($categoryId) 
             $st->bindValue(":categoryId", $categoryId, PDO::PARAM_INT);
         
         $st->execute(); // выполняем запрос к базе данных
-        $list = array();
-// добавляем новое условие для конструктора(ПР5)        
+        $list = array();       
         while ($row = $st->fetch()) {
-            $article = new Article($row, $authors);
+            $article = new Article($row);
             $list[] = $article;
         }
         // Получаем общее количество статей, которые соответствуют критерию
         $sql = "SELECT FOUND_ROWS() AS totalRows";
         $totalRows = $conn->query($sql)->fetch();
         $conn = null;
-        
         return (array(
             "results" => $list, 
             "totalRows" => $totalRows[0]
